@@ -12,7 +12,7 @@ module ActiveRecord
       end
 
       class ColumnDefinition < ActiveRecord::ConnectionAdapters::ColumnDefinition
-        attr_accessor :distkey
+        attr_accessor :distkey, :sortkey
       end
 
       class TableDefinition < ActiveRecord::ConnectionAdapters::TableDefinition
@@ -23,6 +23,13 @@ module ActiveRecord
             @distkey = column
           end
           @distkey
+        end
+
+        def new_column_definition(_name, _type, options = {})
+          col = super
+          col.distkey = options[:distkey]
+          col.sortkey = options[:sortkey]
+          col
         end
 
         # Defines the primary key field.
@@ -60,10 +67,11 @@ module ActiveRecord
           column name, type, options
         end
 
-        def new_column_definition(_name, _type, options = {})
-          col = super
-          col.distkey = options[:distkey]
-          col
+        def sortkey(columns = nil)
+          unless columns.nil?
+            @sortkey = Array.wrap(columns)
+          end
+          @sortkey
         end
 
         private
