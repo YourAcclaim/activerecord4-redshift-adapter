@@ -25,6 +25,13 @@ module ActiveRecord
           @distkey
         end
 
+        def diststyle(style = nil)
+          unless style.nil?
+            @diststyle = style
+          end
+          @diststyle
+        end
+
         def new_column_definition(_name, _type, options = {})
           col = super
           col.distkey = options[:distkey]
